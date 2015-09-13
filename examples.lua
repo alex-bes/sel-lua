@@ -9,9 +9,6 @@ context:registerHandler('pipesWrap', function(arg)
     return "|" .. arg .. "|"
 end);
 
-local pipesWrapHandler = context:getHandlerByName("pipesWrap");
-print(pipesWrapHandler('test'))
-
 
 --base tests
 local firstTest = "Hello $world";
