@@ -1,40 +1,53 @@
 local Parser = require "../sel/parser";
+local Context = require "../sel/context";
 
 ------------------------------------------------
 local Evaluator = {}
 
+local RECURSION_LIMIT = 15
+
 function Evaluator:new(o)
     o = o or {} -- create object if user does not provide one
     o.parser = Parser:new();
+    o.globalContext = Context:new();
     setmetatable(o, self)
     self.__index = self
     return o
 end
 
 function Evaluator:evaluate(expression, context)
-    local result = expression;
+    if not context then
+        context = self.globalContext
+    else
+        context:inherit(self.globalContext)
+    end
+    return self:_evaluate(expression, context, 0)
+end
+
+function Evaluator:_evaluate(expression, context, rLevel)
+    if not type(expression) == 'string' then
+        return expression
+    end
+
+    assert(rLevel < RECURSION_LIMIT, "SEL: Recursion limit reached")
+
     local occurrence = self.parser:parseOccurrence(expression);
     while occurrence do
         local argument
         if occurrence.isFunc then
-            argument = self:evaluate(occurrence.arg, context)
+            argument = self:evaluate(occurrence.arg, context, rLevel + 1)
         end
-
         local handler = context:getHandlerByName(occurrence.name)
-        local expressionValue = handler(argument)
-        if type(result) == "string" and result:len() == occurrence.fullMatch:len() then
-            result = expressionValue;
-            break
-        elseif type(result) == "string" then
-            result = result:gsub(occurrence.fullMatch, expressionValue or "", 1)
-            occurrence = self.parser:parseOccurrence(result);
+        local subValue = handler(argument)
+        if (not type(expression) == "string")
+                or (type(expression) == "string" and expression:len() == occurrence.fullMatch:len()) then
+            expression = subValue;
         else
-            result = expressionValue;
-            break
+            expression = expression:gsub(occurrence.fullMatch, subValue or "", 1)
+            occurrence = self.parser:parseOccurrence(expression);
         end
+        return expression
     end
-
-    return result
 end
 
 return Evaluator

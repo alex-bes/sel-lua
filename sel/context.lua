@@ -19,9 +19,23 @@ function Context:registerValue(name, value)
     self.handlers[name] = handler
 end
 
+function Context:unregisterHandler(name)
+    self.handlers[name] = nil;
+end
+
 function Context:getHandlerByName(name)
     return self.handlers[name]
 end
 
+function Context:getHandlers()
+    return self.handlers
+end
+
+function Context:inherit(context)
+    local parentHandlers = context:getHandlers()
+    for name, handler in pairs(parentHandlers) do
+        self.handlers[name] = handler
+    end
+end
 
 return Context

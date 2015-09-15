@@ -6,6 +6,7 @@ local anotherContext = sel.createContext();
 
 context:registerValue('world', "LUA");
 context:registerHandler('pipesWrap', function(arg)
+    arg = arg or ""
     return "|" .. arg .. "|"
 end);
 
