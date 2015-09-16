@@ -36,7 +36,6 @@ $anyOf($not($myVar), $myVar)
 ```
 
 # TODO
- - Context inheritance 
  - Default context (default handlers library)
  - Tests
  - Docs
