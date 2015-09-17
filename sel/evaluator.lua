@@ -39,15 +39,16 @@ function Evaluator:_evaluate(expression, context, rLevel)
         end
         local handler = context:getHandlerByName(occurrence.name)
         local subValue = handler(argument)
-        if (not type(expression) == "string")
-                or (type(expression) == "string" and expression:len() == occurrence.fullMatch:len()) then
+        if (type(subValue) ~= "string")
+                or (type(subValue) == "string" and expression:len() == occurrence.fullMatch:len()) then
             expression = subValue;
+            break
         else
-            expression = expression:gsub(occurrence.fullMatch, subValue or "", 1)
+            expression = expression:gsub(occurrence.fullMatch, tostring(subValue), 1)
             occurrence = self.parser:parseOccurrence(expression);
         end
-        return expression
     end
+    return expression
 end
 
 return Evaluator
