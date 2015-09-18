@@ -7,5 +7,8 @@ return {
             i = i + 1
         end
         return t
+    end,
+    stringTrim = function(s)
+        return s:match '^()%s*$' and '' or s:match '^%s*(.*%S)'
     end
 }

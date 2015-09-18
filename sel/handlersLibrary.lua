@@ -1,4 +1,6 @@
-local stringSplit = require "../sel/utils".stringSplit
+local utils = require "../sel/utils"
+local stringSplit = utils.stringSplit
+local stringTrim = utils.stringTrim
 
 return {
     populateContextByDefaultHandlers = function(context)
@@ -7,9 +9,8 @@ return {
             arg = tostring(arg)
             arg = arg:lower();
             local args = stringSplit(arg, ",");
-            --            assert(table.getn(args) == 1, "SEL: not handler accepts only one argument")
-            arg = args[1];
-            --TODO: trim arg
+            --assert(table.getn(args) == 1, "SEL: not handler accepts only one argument")
+            arg = stringTrim(args[1]);
             return not (arg == "true")
         end)
 
@@ -17,19 +18,18 @@ return {
             arg = tostring(arg)
             local args = stringSplit(arg, ",");
             for k, v in pairs(args) do
-                v = v --TODO: trim it here
-                if v ~= "true" then
+                if stringTrim(v) ~= "true" then
                     return false;
                 end
             end
             return true;
         end)
+
         context:registerHandler('anyOf', function(arg)
             arg = tostring(arg)
             local args = stringSplit(arg, ",");
             for k, v in pairs(args) do
-                v = v --TODO: trim it here
-                if v == "true" then
+                if stringTrim(v) == "true" then
                     return true;
                 end
             end

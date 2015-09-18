@@ -1,6 +1,5 @@
 local Parser = require "../sel/parser";
 local Context = require "../sel/context";
-
 ------------------------------------------------
 local Evaluator = {}
 
@@ -13,15 +12,6 @@ function Evaluator:new(o)
     setmetatable(o, self)
     self.__index = self
     return o
-end
-
-function Evaluator:evaluate(expression, context)
-    if not context then
-        context = self.globalContext
-    else
-        context:inherit(self.globalContext)
-    end
-    return self:_evaluate(expression, context, 0)
 end
 
 function Evaluator:_evaluate(expression, context, rLevel)
@@ -50,6 +40,17 @@ function Evaluator:_evaluate(expression, context, rLevel)
     end
     return expression
 end
+
+function Evaluator:evaluate(expression, context)
+    if not context then
+        context = self.globalContext
+    else
+        context:inherit(self.globalContext)
+    end
+    return self:_evaluate(expression, context, 0)
+end
+
+
 
 return Evaluator
 
